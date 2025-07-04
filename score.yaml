@@ -1,0 +1,60 @@
+# Score.dev specification for my-awesome-demo Full-Stack Application
+# 
+# ⚠️  DEPRECATED: This unified Score.dev configuration is deprecated.
+# Please use separate score-backend.yaml and score-frontend.yaml files instead.
+# This provides better service separation and follows Score.dev best practices.
+# 
+# For the new approach, see:
+# - score-backend.yaml for backend service configuration
+# - score-frontend.yaml for frontend service configuration
+# - Use 'make score-up' to start services with the new configuration
+#
+apiVersion: score.dev/v1b1
+
+metadata:
+  name: my-awesome-demo
+
+containers:
+  backend:
+    image: my-awesome-demo/backend:latest
+    variables:
+      PORT: "8080"
+      NODE_ENV: "production"
+      LOG_LEVEL: "info"
+      REDIS_HOST: ${resources.redis.host}
+      REDIS_PORT: ${resources.redis.port}
+      REDIS_PASSWORD: ${resources.redis.password}
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+  frontend:
+    image: my-awesome-demo/frontend:latest
+    variables:
+      NODE_ENV: "production"
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+
+service:
+  ports:
+    backend:
+      port: 8080
+      targetPort: 8080
+    frontend:
+      port: 3000
+      targetPort: 3000
+
+resources:
+  redis:
+    type: redis
+    params:
+      username: my-awesome-demo
